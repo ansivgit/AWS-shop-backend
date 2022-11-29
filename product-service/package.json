@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "serverless-auto-swagger": "^2.9.2"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1238.0"
+  }
+}

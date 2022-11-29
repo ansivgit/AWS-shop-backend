@@ -1,0 +1,105 @@
+service: product-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: eu-west-1
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource: '*'
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "*"
+    - Effect: Allow
+      Action: 'sqs:*'
+      Resource:
+        - Fn::GetAtt: [SQSQueue, Arn]
+    - Effect: Allow
+      Action: 'sns:*'
+      Resource:
+        Ref: SNSTopic
+
+  environment:
+    PRODUCTS_TABLE_NAME: products
+    STOCKS_TABLE_NAME: stocks
+    SERVICE_PREFIX: product-service-dev
+    SQS_URL:
+      Ref: SQSQueue
+    SNS_ARN:
+      Ref: SNSTopic
+
+plugins:
+  - serverless-auto-swagger
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: catalogItemsTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+          Endpoint: anna_zhuravleva@epam.com
+          Protocol: email
+          TopicArn:
+            Ref: SNSTopic
+
+functions:
+  getProductsList:
+    handler: handlers/getProductsList.getProductsList
+    events:
+      - http:
+          path: products
+          method: get
+          cors: true
+
+  getProductById:
+    handler: handlers/getProductById.getProductById
+    events:
+      - http:
+          path: products/{productId}
+          method: get
+          cors: true
+
+  createProduct:
+    handler: handlers/createProduct.createProduct
+    events:
+      - http:
+          path: products
+          method: post
+          cors: true
+          request:
+            schema:
+              application/json: ${file(schemas/createProductSchema.json)}
+
+  catalogBatchProcess:
+    handler: handlers/catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
+
+custom:
+  autoswagger:
+    title: 'Sofa shop API'
+    apiType: 'http'
+    typefiles: []
+    basePath: '/dev'

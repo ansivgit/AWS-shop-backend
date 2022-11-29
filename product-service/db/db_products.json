@@ -1,0 +1,70 @@
+{
+  "products": [
+    {
+      "PutRequest": {
+        "Item": {
+          "description": {"S": "Pretty sofa"},
+          "id": {"S": "7567ec4b-b10c-48c5-9345-fc73c48a80aa"},
+          "image": {"S": "/img/cards/01.jpeg"},
+          "price": {"N": "2400"},
+          "title": {"S": "Yellow submarine"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "description": {"S": "Sofa for diving"},
+          "id": {"S": "7567ec4b-b10c-48c5-9345-fc73c48a80a1"},
+          "image": {"S": "/img/cards/02.jpeg"},
+          "price": {"N": "1500"},
+          "title": {"S": "Silver submarine"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "description": {"S": "Greatest sofa for cats!"},
+          "id": {"S": "7567ec4b-b10c-48c5-9345-fc73c48a80a3"},
+          "image": {"S": "/img/cards/03.jpeg"},
+          "price": {"N": "2300"},
+          "title": {"S": "Home, sweet home"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "description": {"S": "Sofa for Girls"},
+          "id": {"S": "7567ec4b-b10c-48c5-9345-fc73348a80a1"},
+          "image": {"S": "/img/cards/04.jpeg"},
+          "price": {"N": "1500"},
+          "title":{"S":  "Oh, baby!"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "description": {"S": "Sofa for men"},
+          "id": {"S": "7567ec4b-b10c-48c5-9445-fc73c48a80a2"},
+          "image": {"S": "/img/cards/05.jpeg"},
+          "price": {"N": "2300"},
+          "title":{"S":  "Yes, Sir!"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "description": {"S": "Sofa for Dreams"},
+          "id": {"S": "7567ec4b-b10c-45c5-9345-fc73c48a80a1"},
+          "image": {"S": "/img/cards/06.jpeg"},
+          "price": {"N": "1500"},
+          "title": {"S": "Green dream"}
+        }
+      }
+    }
+  ]
+}

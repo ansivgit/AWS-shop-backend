@@ -1,0 +1,29 @@
+service: authorization-service
+
+frameworkVersion: '3'
+
+package:
+  individually: true
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+
+plugins:
+  - serverless-dotenv-plugin
+
+functions:
+  basicAuthorizer:
+    handler: handlers/basicAuthorizer.basicAuthorizer
+    events:
+      - http:
+          path: token
+          method: get
+          cors: true

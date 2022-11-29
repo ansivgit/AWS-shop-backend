@@ -1,0 +1,64 @@
+service: import-service
+
+frameworkVersion: '3'
+
+package:
+  individually: true
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 's3:ListBucket'
+      Resource: 'arn:aws:s3:::import-service-sofa-shop'
+    - Effect: Allow
+      Action: 's3:*'
+      Resource: 'arn:aws:s3:::import-service-sofa-shop/*'
+
+  environment:
+    IMPORT_BUCKET: import-service-sofa-shop
+    UPLOADED_CATALOG_PREFIX: ${self:custom.uploadedCatalogPath}
+    PARSED_CATALOG_PREFIX: ${self:custom.parsedCatalogPath}
+    SQS_URL: 'https://sqs.eu-west-1.amazonaws.com/056265743163/catalogItemsQueue'
+
+functions:
+  importProductsFile:
+    handler: handlers/importProductsFile.importProductsFile
+    events:
+      - http:
+          path: import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+          cors: true
+          authorizer:
+            type: token
+            arn: 'arn:aws:lambda:eu-west-1:056265743163:function:authorization-service-dev-basicAuthorizer'
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+
+  importFileParser:
+    handler: handlers/importFileParser.importFileParser
+    events:
+      - s3:
+          bucket: ${self:custom.bucketName}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: '${self:custom.uploadedCatalogPath}'
+          existing: true
+
+custom:
+  bucketName: import-service-sofa-shop
+  uploadedCatalogPath: uploaded/
+  parsedCatalogPath: parsed/
